@@ -7,12 +7,13 @@ repositories {
 }
 
 dependencies {
-   implementation("io.vertx:vertx-core:3.9.2")
+    implementation("io.vertx:vertx-bridge-common:3.9.2")
+    implementation("io.vertx:vertx-core:3.9.2")
     implementation("io.vertx:vertx-config:3.9.2")
     implementation("io.vertx:vertx-rx-java:3.9.2")
     implementation("io.vertx:vertx-web:3.9.2")
     implementation("io.vertx:vertx-lang-js:3.9.2")
-   implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.2.3")
 }
 
 tasks.create<JavaExec>("run") {

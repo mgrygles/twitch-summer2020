@@ -1,0 +1,5 @@
+{
+  "port": 8080,
+  "max-delay-ms": 800,
+  "worker-count": 2
+}

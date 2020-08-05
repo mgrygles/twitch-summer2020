@@ -5,7 +5,8 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
-import io.vertx.ext.web.handler.sockjs.PermittedOptions;
+import io.vertx.ext.bridge.PermittedOptions;
+import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.rxjava.config.ConfigRetriever;
@@ -75,7 +76,7 @@ public class APIVerticle extends AbstractVerticle {
                 config-> {
                     logger.info("Retrieved config");
                     if (config.failed()) {
-                        logger.info("Unable to find the config file!");
+                        logger.warn("Unable to find the config file!");
                     } else {
                         logger.info("Got the config file successfully!");
                         startup(config.result());
@@ -129,6 +130,40 @@ public class APIVerticle extends AbstractVerticle {
     }
 
     private void startup(JsonObject config) {
+        processConfig(config);
+
+        // Create a Router object: to handle requests
+        router = Router.router(vertx);
+
+        // Handle CORS requests
+        router.route().handler(CorsHandler.create("*")
+                .allowedMethod(HttpMethod.GET)
+                .allowedMethod(HttpMethod.OPTIONS)
+                .allowedHeader("Accept")
+                .allowedHeader("Authorization")
+                .allowedHeader("Content-Type"));
+
+        router.get("/health").handler(this::generateHealth);
+        router.get("/api/resources").handler(this::getAll);
+        router.get("/api/resources/:id").handler(this::getOne);
+        router.route("/static/*").handler(StaticHandler.create());
+
+        // set in/out Permission for the addresses
+        SockJSBridgeOptions opts = new SockJSBridgeOptions()
+                .addInboundPermitted(new PermittedOptions().setAddress("client.to.api"))
+                .addInboundPermitted(new PermittedOptions().setAddress("api.to.client"))
+                .addInboundPermitted(new PermittedOptions().setAddress("worker.to.client"));
+
+        SockJSHandler ebusHandler = SockJSHandler.create(vertx).bridge(opts);
+        router.route("/eventbus/*").handler(ebusHandler);
+
+        // Create the HTTP server and pass the "accept" method to the request handler
+
+
+
+
+
+
     }
 
     private void measure(){
