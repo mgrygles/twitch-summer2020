@@ -153,6 +153,7 @@ public class APIVerticle extends AbstractVerticle {
                 .addInboundPermitted(new PermittedOptions().setAddress("api.to.client"))
                 .addInboundPermitted(new PermittedOptions().setAddress("worker.to.client"));
 
+        // TODO
         SockJSHandler ebusHandler = SockJSHandler.create(vertx).bridge(opts);
         router.route("/eventbus/*").handler(ebusHandler);
 
@@ -227,6 +228,7 @@ public class APIVerticle extends AbstractVerticle {
                 next_worker.set(1);
             }
         }
+        return worker_index;
     }
 
     private void generateHealth(RoutingContext rctx) {
@@ -254,6 +256,7 @@ public class APIVerticle extends AbstractVerticle {
         latency.set(0);
     }
 
+    // TODO
     private void deployJavaWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
@@ -273,6 +276,7 @@ public class APIVerticle extends AbstractVerticle {
         });
     }
 
+    //TODO
     private void deployKotlinWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
@@ -292,6 +296,7 @@ public class APIVerticle extends AbstractVerticle {
         });
     }
 
+    // TODO
     private void deployJSWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
