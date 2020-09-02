@@ -4,7 +4,8 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.bridge.PermittedOptions;
+import io.vertx.ext.web.handler.sockjs.BridgeOptions;
+import io.vertx.ext.web.handler.sockjs.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -154,8 +155,8 @@ public class APIVerticle extends AbstractVerticle {
                 .addInboundPermitted(new PermittedOptions().setAddress("worker.to.client"));
 
         // TODO
-        SockJSHandler ebusHandler = SockJSHandler.create(vertx).bridge(opts);
-        router.route("/eventbus/*").handler(ebusHandler);
+        SockJSHandler ebHandler = SockJSHandler.create(vertx).bridge(opts).route("/eventbus/*").handler();
+        //router.route("/eventbus/*").handler(ebHandler);
 
         // Create the HTTP server and pass the "accept" method to the request handler
         int port = config.getInteger("port", 8080);
@@ -256,7 +257,7 @@ public class APIVerticle extends AbstractVerticle {
         latency.set(0);
     }
 
-    // TODO
+    //
     private void deployJavaWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
@@ -276,7 +277,7 @@ public class APIVerticle extends AbstractVerticle {
         });
     }
 
-    //TODO
+    //
     private void deployKotlinWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
@@ -296,7 +297,7 @@ public class APIVerticle extends AbstractVerticle {
         });
     }
 
-    // TODO
+    //
     private void deployJSWorker() {
         current_workers.incrementAndGet();
         JsonObject config = new JsonObject().put("instance", current_workers.get());
